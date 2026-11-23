@@ -31,7 +31,6 @@ merve	Formula/m/merve.rb	9575b2295e8b309added7320c50141fa4eac761b	1.2.2_4	1.2.2_
 node	Formula/n/node.rb	9575b2295e8b309added7320c50141fa4eac761b	26.13.1	26.13.1_2
 nss	Formula/n/nss.rb	9575b2295e8b309added7320c50141fa4eac761b	3.133	3.134
 numpy	Formula/n/numpy.rb	9575b2295e8b309added7320c50141fa4eac761b	2.5.4	2.5.5
-oh-my-posh	Formula/o/oh-my-posh.rb	9575b2295e8b309added7320c50141fa4eac761b	33.3.0	33.3.1
 openexr	Formula/o/openexr.rb	9575b2295e8b309added7320c50141fa4eac761b	3.5.3_1	3.5.5
 p11-kit	Formula/p/p11-kit.rb	9575b2295e8b309added7320c50141fa4eac761b	0.26.5	0.26.6
 pandoc	Formula/p/pandoc.rb	9575b2295e8b309added7320c50141fa4eac761b	3.13	3.14
