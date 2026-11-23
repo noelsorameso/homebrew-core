@@ -7,11 +7,8 @@ class Powerlevel10k < Formula
   head "https://github.com/romkatv/powerlevel10k.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_golden_gate: "cdfa907888474e9ecdeb2ac2d07ff0f5f078da4e2eedc9740578f67bb96b27e7"
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:       "cdfa907888474e9ecdeb2ac2d07ff0f5f078da4e2eedc9740578f67bb96b27e7"
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:     "cdfa907888474e9ecdeb2ac2d07ff0f5f078da4e2eedc9740578f67bb96b27e7"
-    sha256 cellar: :any_skip_relocation, arm64_linux:       "c932c025b22888e5892aeb53391e2d64a6628d770aabf706d2bd77c310cf0420"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:      "1232f98c8e6314264b00042e24969ea584c508ed563da5c94a5eefd5b29965bb"
+    root_url "https://github.com/noelsorameso/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any_skip_relocation, tahoe: "ebdc9b6b7af518e4f1654f783e2b490ffa6ee807705a3d69cf9f1f106602d946"
   end
 
   uses_from_macos "zsh" => :test

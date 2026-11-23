@@ -18,11 +18,8 @@ class Cmake < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_golden_gate: "85c89cef809cac14bd5fc155038a878c6caf19b1b6b94382204265e99dc42498"
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:       "75374193e7da7edf9aa4b7792aca1a3c8c95b35bd8def890b6bfd50e9ac68918"
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:     "4c539c1f95ed398d2eef8d3e8f0e5de3e96b918c6af91aa3ad337408adb26d7e"
-    sha256 cellar: :any,                 arm64_linux:       "51cdf80e6d6d6cf4373168899755e2ddf2b4c5e8b937844f920fad5c91b0f3e0"
-    sha256 cellar: :any,                 x86_64_linux:      "038d3b38795d567f18768b5cd668f4d728804c1490f2fe554e726d132e237097"
+    root_url "https://github.com/noelsorameso/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any_skip_relocation, tahoe: "9f96b37c7891d7600671d7fc04aebca2b35a32b37735091fb347ce3618bbcf69"
   end
 
   uses_from_macos "ncurses"

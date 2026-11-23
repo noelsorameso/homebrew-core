@@ -13,11 +13,8 @@ class Wxwidgets < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_golden_gate: "0f554fde69b6abacfc3c6ed0f39611c9419295d8f6e19933300fe7028ee9359b"
-    sha256 cellar: :any, arm64_tahoe:       "a35d29c7870c3fe42f0f2688cd8c9d815db1887df164f16b52086ea44bbba1bc"
-    sha256 cellar: :any, arm64_sequoia:     "1244fb20ec6bd39217ad73118995696761a776f66a47f8f38761f0eb29d83892"
-    sha256 cellar: :any, arm64_linux:       "fa20fca19dae32d7e923c8088618dce8e4edfb32ff8b9cfb9cd2a24fb7fc94dc"
-    sha256 cellar: :any, x86_64_linux:      "07a9b1f8587df1e98500cda649aea6f035894619fcf61f089749da6d805872d3"
+    root_url "https://github.com/noelsorameso/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any, tahoe: "6ec76f9c11a3b0b65ef1fc20815a8dd033284be7efdc0d3c7bdd5254984f50b2"
   end
 
   depends_on "pkgconf" => :build

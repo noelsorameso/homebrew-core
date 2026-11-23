@@ -7,11 +7,8 @@ class Imlib2 < Formula
   compatibility_version 1
 
   bottle do
-    sha256 arm64_golden_gate: "d6ebbe07332d273b036e21081b15a36ebfc39367e2a1b0e3ffa2d29b5ea1a823"
-    sha256 arm64_tahoe:       "d9dfbf6f483a2bc8c60ee8ef1bc2a0b04c39c8f0716b6600a339cd785050e1bf"
-    sha256 arm64_sequoia:     "53a037e4c07768b6b0ce5feebc078074a62bb374dc7d74f08159b27cd000f13f"
-    sha256 arm64_linux:       "bdbd9277c7e10a9cc31793a4920f282c15217481ccd3a0cff8a8e9ba124dbd37"
-    sha256 x86_64_linux:      "cae14dfcb52c6b6712409a97fe640d3d52d4a5c5d4f8830bcd672888ca03d4ae"
+    root_url "https://github.com/noelsorameso/intel-bottles/releases/download/bottles"
+    sha256 tahoe: "93cac559871c1ce4c0ddfcdeaffd00ace912c1170a70b4feed5612f297993bf2"
   end
 
   depends_on "pkgconf" => :build
