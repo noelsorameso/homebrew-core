@@ -12,11 +12,8 @@ class Xorgproto < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_golden_gate: "8327b24ee8a0d4b3cd9dfb6d49eb20a80484c0f25535be6e726d1b908f444514"
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:       "8327b24ee8a0d4b3cd9dfb6d49eb20a80484c0f25535be6e726d1b908f444514"
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:     "8327b24ee8a0d4b3cd9dfb6d49eb20a80484c0f25535be6e726d1b908f444514"
-    sha256 cellar: :any_skip_relocation, arm64_linux:       "14bbb72aa9d9a989ea94f21ca6b31f3f40b1fe337438bf1e9b5b318eb3131899"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:      "14bbb72aa9d9a989ea94f21ca6b31f3f40b1fe337438bf1e9b5b318eb3131899"
+    root_url "https://github.com/noelsorameso/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any_skip_relocation, tahoe: "20cee62cc3e8dd7d6064c272eba31982f771b338b90567d721ca1065b6ceef02"
   end
 
   depends_on "pkgconf" => [:build, :test]
