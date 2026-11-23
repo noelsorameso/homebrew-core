@@ -6,15 +6,15 @@ class Ruby < Formula
 
   stable do
     # TODO: enable default_user_install when updating to Ruby 4.1
-    url "https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.10.tar.gz"
-    sha256 "b53eef3371fa5d3e3b74340edcd015f06d5d8853968d4e539a5264fce41ed9f1"
+    url "https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.9.tar.gz"
+    sha256 "c35350682ff050b79702d57ade4516e7336063f510155d19fb2fb5b3f3909511"
 
     # Should be updated only when Ruby is updated (if an update is available).
     # The exception is Rubygem security fixes, which mandate updating this
     # formula & the versioned equivalents and bumping the revisions.
     resource "rubygems" do
-      url "https://rubygems.org/rubygems/rubygems-4.1.0.tgz"
-      sha256 "d0483e63c81c1f9c9c236ed4ec1bb0efd196e9aae858cdf4d309a0da51a82a2b"
+      url "https://rubygems.org/rubygems/rubygems-4.0.23.tgz"
+      sha256 "843f89b1c9c35c28f7ccaf4580cde1e7b00dbd1907b46bcfdcdbc6afa7345e56"
 
       livecheck do
         url "https://rubygems.org/pages/download"
@@ -29,11 +29,8 @@ class Ruby < Formula
   end
 
   bottle do
-    sha256 arm64_golden_gate: "3fce03a6413b497c4c53bdd72138b83e5d142dbe32f4b59a10f5e1cdc739f5f3"
-    sha256 arm64_tahoe:       "e916067f925e9a3d4c84761f7adc51630d425b8679486923d59adcc5537b57b2"
-    sha256 arm64_sequoia:     "af69ccdbf9562f12659f8a950fb23ed643ccd3aadacafa92fee965ec0280f740"
-    sha256 arm64_linux:       "2d35222cc842e18006a3fd04a081b792e87d61f1bb16f06cb466e420e3480e85"
-    sha256 x86_64_linux:      "d679b71d100ca6ce8ee9cb37c34bc181e034a4ce6b1863d907e3727813244324"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 tahoe: "511290b9c4ee9eb17c99f9a2965f92bdcacdfdcf02f77eb13d81eae5ed712a40"
   end
 
   head do
@@ -70,8 +67,7 @@ class Ruby < Formula
         determine_api_version
       else
         # Best effort guess
-        next_minor = stable.version.minor.to_i + 1
-        "#{stable.version.major.to_i}.#{next_minor}.0+0"
+        "#{stable.version.major.to_i}.#{stable.version.minor.to_i + 1}.0+0"
       end
     else
       "#{version.major.to_i}.#{version.minor.to_i}.0"
@@ -160,7 +156,28 @@ class Ruby < Formula
     # Customize rubygems to look/install in the global gem directory
     # instead of in the Cellar, making gems last across reinstalls
     config_file = lib/"ruby/#{api_version}/rubygems/defaults/operating_system.rb"
-    config_file.write <<~RUBY
+    config_file.write rubygems_config
+  end
+
+  # Since Gem ships Bundle we want to provide that full/expected installation
+  # but to do so we need to handle the case where someone has previously
+  # installed bundle manually via `gem install`.
+  # TODO: remove the `remove` step when enabling default_user_install
+  post_install_steps do
+    remove "{{HOMEBREW_PREFIX}}/lib/ruby/gems/{{version.major_minor}}.0/gems/bundler-*", recursive: true
+    on_macos do
+      if_path_exists "opt/ruby@{{version.major_minor}}/lib/libruby.{{version.major_minor}}.dylib",
+                     base: :homebrew_prefix do
+        change_dylib_id "lib/libruby.dylib",
+                        "{{HOMEBREW_PREFIX}}/opt/ruby@{{version.major_minor}}/" \
+                        "lib/libruby.{{version.major_minor}}.dylib",
+                        resolve_source: true
+      end
+    end
+  end
+
+  def rubygems_config
+    <<~RUBY
       module Gem
         class << self
           alias :old_default_dir :default_dir
@@ -238,23 +255,6 @@ class Ruby < Formula
         end
       end
     RUBY
-  end
-
-  # Since Gem ships Bundle we want to provide that full/expected installation
-  # but to do so we need to handle the case where someone has previously
-  # installed bundle manually via `gem install`.
-  # TODO: remove the `remove` step when enabling default_user_install
-  post_install_steps do
-    remove "{{HOMEBREW_PREFIX}}/lib/ruby/gems/{{version.major_minor}}.0/gems/bundler-*", recursive: true
-    on_macos do
-      if_path_exists "opt/ruby@{{version.major_minor}}/lib/libruby.{{version.major_minor}}.dylib",
-                     base: :homebrew_prefix do
-        change_dylib_id "lib/libruby.dylib",
-                        "{{HOMEBREW_PREFIX}}/opt/ruby@{{version.major_minor}}/" \
-                        "lib/libruby.{{version.major_minor}}.dylib",
-                        resolve_source: true
-      end
-    end
   end
 
   def caveats

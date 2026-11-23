@@ -2,12 +2,13 @@ class Llvm < Formula
   desc "Next-gen compiler infrastructure"
   homepage "https://llvm.org/"
   license "Apache-2.0" => { with: "LLVM-exception" }
+  revision 1
   compatibility_version 2
   head "https://github.com/llvm/llvm-project.git", branch: "main"
 
   stable do
-    url "https://github.com/llvm/llvm-project/releases/download/llvmorg-23.1.6/llvm-project-23.1.6.src.tar.xz"
-    sha256 "d3b86ab29cfb4445a6652e5c2642ccc75e04e38084dde3701d323320f35a31da"
+    url "https://github.com/llvm/llvm-project/releases/download/llvmorg-23.1.5/llvm-project-23.1.5.src.tar.xz"
+    sha256 "fb50b1eac93ddeb3aa8dab4cfe324dff74f4a9c2bdee6160c9e36188f8d06a6e"
 
     # Fix triple config loading for clang-cl
     patch do
@@ -23,11 +24,8 @@ class Llvm < Formula
   end
 
   bottle do
-    sha256               arm64_golden_gate: "a649443f745f103eeb1b3c59255bf9dcefd7287ec91ce45afcadc2976ca8541e"
-    sha256               arm64_tahoe:       "e8479b14cf92f2c1092ef31531a89b8c9b88e97207e3b80e330f2037e594963b"
-    sha256               arm64_sequoia:     "8a7215262526c9d76c252136eeb4b972ffd93fa6aa1820a5cd16d21cf1362ad8"
-    sha256 cellar: :any, arm64_linux:       "d13a82f06252670a45de41805399465a21491ed2707a8433968cc4d344d2a0f0"
-    sha256 cellar: :any, x86_64_linux:      "27fe7d5572c25de115a8c90c54a5664a8d59fc58db8412b30c5ccabcf15999b7"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any, tahoe: "377262116a55a39a5599dc0fdabe6d098086a79a7a24051346b24096fe3c0c09"
   end
 
   keg_only :provided_by_macos
@@ -93,7 +91,6 @@ class Llvm < Formula
     # can almost be treated as an entirely different build from llvm.
     ENV.permit_arch_flags
 
-    z3_solver = enable_z3 ? "ON" : "OFF"
     args = %W[
       -DLLVM_ENABLE_PROJECTS=#{projects.join(";")}
       -DLLVM_ENABLE_RUNTIMES=#{runtimes.join(";")}
@@ -103,7 +100,7 @@ class Llvm < Formula
       -DLLVM_ENABLE_EH=OFF
       -DLLVM_ENABLE_FFI=ON
       -DLLVM_ENABLE_RTTI=ON
-      -DLLVM_ENABLE_Z3_SOLVER=#{z3_solver}
+      -DLLVM_ENABLE_Z3_SOLVER=#{enable_z3 ? "ON" : "OFF"}
       -DLLVM_INCLUDE_BENCHMARKS=OFF
       -DLLVM_INCLUDE_DOCS=OFF
       -DLLVM_INCLUDE_TESTS=OFF
@@ -215,9 +212,8 @@ class Llvm < Formula
 
       # We build the basic parts of a toolchain to profile.
       # The extra targets on macOS are part of a default Compiler-RT build.
-      extra_targets = ";AArch64;ARM;X86" if OS.mac?
       extra_args = %W[
-        -DLLVM_TARGETS_TO_BUILD=Native#{extra_targets}
+        -DLLVM_TARGETS_TO_BUILD=Native#{";AArch64;ARM;X86" if OS.mac?}
         -DLLVM_ENABLE_PROJECTS=clang;lld
         -DLLVM_ENABLE_RUNTIMES=compiler-rt
       ]
@@ -423,51 +419,53 @@ class Llvm < Formula
 
     return unless lto_build
 
-    # Convert LTO-generated bitcode in our static archives to Mach-O.
-    # Archives with unique member names keep flat extraction and replacement.
-    # Only archives containing duplicate names require per-occurrence extraction
-    # and rebuilding: flat extraction overwrites same-named members, while
-    # `llvm-ar r` replaces only the first matching member.
-    #
-    # Adapted from Fedora:
-    # https://src.fedoraproject.org/rpms/redhat-rpm-config/blob/1c5e204554732b224956618610a990e7acd74f62/f/brp-llvm-compile-lto-elf
-    lib.glob("*.a").each do |static_archive|
-      mktemp do
-        members = Utils.safe_popen_read(bin/"llvm-ar", "t", static_archive).split("\n")
-        has_duplicates = members.uniq.length != members.length
+    lib.glob("*.a").each { |static_archive| convert_lto_archive(static_archive) }
+  end
 
-        member_files = if has_duplicates
-          occurrences = Hash.new(0)
-          members.each_with_index.map do |member, index|
-            member_dir = Pathname.pwd/index.to_s
-            member_dir.mkpath
-            occurrences[member] += 1
-            system bin/"llvm-ar", "xN", occurrences[member].to_s, static_archive, member,
-                   "--output=#{member_dir}"
-            member_dir/member
-          end
-        else
-          system bin/"llvm-ar", "x", static_archive
-          Pathname.glob("*.o")
+  # Convert LTO-generated bitcode in our static archives to Mach-O.
+  # Archives with unique member names keep flat extraction and replacement.
+  # Only archives containing duplicate names require per-occurrence extraction
+  # and rebuilding: flat extraction overwrites same-named members, while
+  # `llvm-ar r` replaces only the first matching member.
+  #
+  # Adapted from Fedora:
+  # https://src.fedoraproject.org/rpms/redhat-rpm-config/blob/1c5e204554732b224956618610a990e7acd74f62/f/brp-llvm-compile-lto-elf
+  def convert_lto_archive(static_archive)
+    mktemp do
+      members = Utils.safe_popen_read(bin/"llvm-ar", "t", static_archive).split("\n")
+      has_duplicates = members.uniq.length != members.length
+
+      member_files = if has_duplicates
+        occurrences = Hash.new(0)
+        members.each_with_index.map do |member, index|
+          member_dir = Pathname.pwd/index.to_s
+          member_dir.mkpath
+          occurrences[member] += 1
+          system bin/"llvm-ar", "xN", occurrences[member].to_s, static_archive, member,
+                 "--output=#{member_dir}"
+          member_dir/member
         end
+      else
+        system bin/"llvm-ar", "x", static_archive
+        Pathname.glob("*.o")
+      end
 
-        converted_files = member_files.select do |bc_file|
-          file_type = Utils.safe_popen_read("file", "--brief", bc_file)
-          next false unless file_type.match?(/^LLVM (IR )?bitcode/)
+      converted_files = member_files.select do |bc_file|
+        file_type = Utils.safe_popen_read("file", "--brief", bc_file)
+        next false unless file_type.match?(/^LLVM (IR )?bitcode/)
 
-          system bin/"clang", "-fno-lto", "-Wno-unused-command-line-argument",
-                              "-x", "ir", bc_file, "-c", "-o", bc_file
-          true
-        end
-        next if converted_files.empty?
+        system bin/"clang", "-fno-lto", "-Wno-unused-command-line-argument",
+                            "-x", "ir", bc_file, "-c", "-o", bc_file
+        true
+      end
+      next if converted_files.empty?
 
-        if has_duplicates
-          rebuilt_archive = Pathname.pwd/static_archive.basename
-          system bin/"llvm-ar", "qcs", rebuilt_archive, *member_files
-          mv rebuilt_archive, static_archive
-        else
-          system bin/"llvm-ar", "r", static_archive, *converted_files
-        end
+      if has_duplicates
+        rebuilt_archive = Pathname.pwd/static_archive.basename
+        system bin/"llvm-ar", "qcs", rebuilt_archive, *member_files
+        mv rebuilt_archive, static_archive
+      else
+        system bin/"llvm-ar", "r", static_archive, *converted_files
       end
     end
   end
@@ -587,8 +585,7 @@ class Llvm < Formula
       # Testing Command Line Tools
       if OS.mac? && MacOS::CLT.installed?
         toolchain_path = "/Library/Developer/CommandLineTools"
-        cpp_base = toolchain_path
-        cpp_base = MacOS::CLT.sdk_path if MacOS.version >= :big_sur
+        cpp_base = (MacOS.version >= :big_sur) ? MacOS::CLT.sdk_path : toolchain_path
         system bin/"clang++", "-v",
                "--no-default-config",
                "-isysroot", MacOS::CLT.sdk_path,
@@ -626,11 +623,7 @@ class Llvm < Formula
 
       # Testing Xcode
       if OS.mac? && MacOS::Xcode.installed?
-        cpp_base = if MacOS::Xcode.version >= "12.5"
-          MacOS::Xcode.sdk_path
-        else
-          MacOS::Xcode.toolchain_path
-        end
+        cpp_base = (MacOS::Xcode.version >= "12.5") ? MacOS::Xcode.sdk_path : MacOS::Xcode.toolchain_path
         system bin/"clang++", "-v",
                "--no-default-config",
                "-isysroot", MacOS::Xcode.sdk_path,
@@ -648,8 +641,7 @@ class Llvm < Formula
 
       # link against installed libc++
       # related to https://github.com/Homebrew/legacy-homebrew/issues/47149
-      cxx_libdir = opt_lib
-      cxx_libdir /= "c++" if OS.mac?
+      cxx_libdir = OS.mac? ? opt_lib/"c++" : opt_lib
       system bin/"clang++", "-v",
              "-isystem", "#{opt_include}/c++/v1",
              "-std=c++11", "-stdlib=libc++", "test.cpp", "-o", "testlibc++",

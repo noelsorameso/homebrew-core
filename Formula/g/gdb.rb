@@ -10,11 +10,8 @@ class Gdb < Formula
   head "https://sourceware.org/git/binutils-gdb.git", branch: "master"
 
   bottle do
-    sha256 arm64_golden_gate: "8dee7b8cc7eee80d35988b2ae17291083b8fd951209cb4f60afc9a4cfa8d3ceb"
-    sha256 arm64_tahoe:       "c616c89bff1382d9481cb51f8e3737f91684f7b9efd184eae0f4fc71749e6f7f"
-    sha256 arm64_sequoia:     "5ef8f3a5486ae4343d5ed0993d6a3b30f2b12899bdf94c73e522011528e6e097"
-    sha256 arm64_linux:       "4d9ed2a1b243b7b634b5170235cf8ee05a74f9f8718ea0014ce9d6c56e98fc86"
-    sha256 x86_64_linux:      "06dacef657717e6ee286ef592c41d618a25ad31637f5dcb3b5e86af3bb1efcd4"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 tahoe: "3acddb2cb27985a24a8961f37ed25bf9d10696b52a802ec0b5c8d75d885b58bd"
   end
 
   depends_on "pkgconf" => :build

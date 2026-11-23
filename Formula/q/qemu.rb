@@ -13,11 +13,8 @@ class Qemu < Formula
   end
 
   bottle do
-    sha256 arm64_golden_gate: "633b1cb3f1fac3e73e0dc7b686284c634a8344c1235f04e0d84d9c5727e221a0"
-    sha256 arm64_tahoe:       "40e8e0197565187e4cf61c17483cf802938ce2371c44c55f383f7bf4bf104fdf"
-    sha256 arm64_sequoia:     "a99cca4450c91f471e8e546b8fb48780e0cb2104ffbe15d394c1b431d44df620"
-    sha256 arm64_linux:       "95c9c3f9c0d9d9b51e391c20a9c6e9d20ff530399ec8ce080a88f577a32c9afe"
-    sha256 x86_64_linux:      "f9790fce2812559cc097d4204f79706bab5c20046f1ba1508d629c402d18265f"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 tahoe: "fa15d3f81ea43fef73ba2ea8cef9ad884e2f782f52cd7c818ec30dd777138e56"
   end
 
   depends_on "bison" => :build # >= 3.0

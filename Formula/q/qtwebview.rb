@@ -17,11 +17,8 @@ class Qtwebview < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_golden_gate: "7306cdfd14f09e86ccd6a591ccc421de2fe571046f991c9aca2f61cc13164d53"
-    sha256 cellar: :any, arm64_tahoe:       "8cbc8b44707b0bf28e8869325b223718463651737491773af18b9426b84a2bbe"
-    sha256 cellar: :any, arm64_sequoia:     "db07ff8f985dd4faa817eb7782cbdc7e24fdb38130e7e4a860725ad5544069fb"
-    sha256 cellar: :any, arm64_linux:       "112da0c9ed24d8f3f480f07a6761eb1190e8818c12b3787011b3917b33867bac"
-    sha256 cellar: :any, x86_64_linux:      "17e445b09ad3ecf32a3af3200bce39a74979b80fc2e1900387c00644830ab2c4"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any, tahoe: "3e7e0038f4bf449afcc5480e9017e00e835a91dfbf36789f099d232c89c38558"
   end
 
   depends_on "cmake" => :build

@@ -13,11 +13,8 @@ class Gtkx3 < Formula
   end
 
   bottle do
-    sha256 arm64_golden_gate: "a999458cf54e8d440673da8f4c110481081b775b8258aaf7b47561792bdf9802"
-    sha256 arm64_tahoe:       "cfb433ae2b1ac08ef423491c7236861c7b25c31743bd1de899b103e7f9cb1a05"
-    sha256 arm64_sequoia:     "1e73c5fefdf1c6395fd3398eafbb484a70fc0059750973ced3c8b3ac9eb7bd01"
-    sha256 arm64_linux:       "d57c67a20ba76eafd8977be29bafd0f4c678177a66b361bf382d65f17a4df4a3"
-    sha256 x86_64_linux:      "513e03c1af12eb60337b6b840e37f0315af8c5b62b9f43dae5a5c2e7499d90d7"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 tahoe: "103485f68a8b96eecc3c89ded43b5eba0a52fb2282a79b4b6bb5c6750a905c7d"
   end
 
   depends_on "docbook" => :build

@@ -13,11 +13,8 @@ class Qttranslations < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_golden_gate: "62b7150d75ca2a2ee84fa565f1a911af6af94e266501128de82f49b6be5c52a0"
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:       "62b7150d75ca2a2ee84fa565f1a911af6af94e266501128de82f49b6be5c52a0"
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:     "c011fbfec5da00acc93cad982cf0353ef59272266d05ba6f9865bc66f02e9956"
-    sha256 cellar: :any_skip_relocation, arm64_linux:       "f8a0acc6f9b16abaa2f97351af3e504b6fe0cd767c936529ddabb87fc612f154"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:      "b1efa9e192887b4541c67cddddaf2c118dc8cdaf11134a93a33bffda6fd35667"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any_skip_relocation, tahoe: "224d8b1acc55634cc4a38a0aae32ab439733652159756df67c053ee7052b9c98"
   end
 
   depends_on "cmake" => [:build, :test]

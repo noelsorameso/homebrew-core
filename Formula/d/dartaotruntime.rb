@@ -2,21 +2,18 @@ class Dartaotruntime < Formula
   desc "Command-line tool for running AOT-compiled snapshots of Dart code"
   homepage "https://dart.dev/tools/dartaotruntime"
   url "https://github.com/dart-lang/sdk.git",
-      tag:      "3.14.1",
-      revision: "c8a0db5978a68d4037f7e5294ffc79867935c8c2"
+      tag:      "3.13.7",
+      revision: "416e33b0ffaef062a60ec966bb8c82ed2b83f128"
   license "BSD-3-Clause"
-  compatibility_version 4
+  compatibility_version 3
 
   livecheck do
     formula "dart-sdk"
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_golden_gate: "df95a0a870f34aa4d641516d406b5bf9188b6f4cf00ee75f73c4e4ea85469003"
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:       "e2338a3a79090297210540f47bab8f8736cf094c38cd68674cedee152172d62b"
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:     "b8724b0232682d7c0ed78378a8542c4a9a07325172c2fbf668b4f240166139dc"
-    sha256 cellar: :any,                 arm64_linux:       "535dc7b89899f61e7150731af3d88b5efd70eae4d82d45bdc7a8860cae035c4b"
-    sha256 cellar: :any,                 x86_64_linux:      "b2bd018c0b6d52a26c82d4c4c57401e18cb3eec9a1ff53d47780e0948c361544"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any_skip_relocation, tahoe: "f8d0210fa05f07edf16c8e991b86874533e14ae9dfcec1c76591e4e699f4d19b"
   end
 
   depends_on "ninja" => :build
@@ -32,8 +29,8 @@ class Dartaotruntime < Formula
   # always pull the latest commit from https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/refs/heads/main
   resource "depot-tools" do
     url "https://chromium.googlesource.com/chromium/tools/depot_tools.git",
-        revision: "ec77017fb3e090ff02bffb9c6980ebcdd3006ddc"
-    version "ec77017fb3e090ff02bffb9c6980ebcdd3006ddc"
+        revision: "b1c2e86792a7f2b6576c181b7327ddd53b1a42a8"
+    version "b1c2e86792a7f2b6576c181b7327ddd53b1a42a8"
 
     livecheck do
       url "https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/refs/heads/main?format=JSON"
@@ -51,7 +48,11 @@ class Dartaotruntime < Formula
     ENV["DEPOT_TOOLS_UPDATE"] = "0"
     ENV.append_path "PATH", buildpath/"depot-tools"
 
-    system "gclient", "config", "--name", "sdk", "file://#{buildpath}/sdk"
+    # Roll clang to include lld support for arm64e.x1 targets in the macOS 27 SDK (llvm/llvm-project#222721)
+    # TODO: Remove when upstream rolls clang past that commit, see https://github.com/dart-lang/sdk/issues/64264
+    system "gclient", "config", "--name", "sdk",
+           "--custom-var", 'clang_version="git_revision:07d67299a15ce03b053736e2d31a668ee0576987"',
+           "file://#{buildpath}/sdk"
     system "gclient", "sync", "--no-history"
   end
 

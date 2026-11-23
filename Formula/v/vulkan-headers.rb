@@ -13,8 +13,8 @@ class VulkanHeaders < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, all: "64cb4ed61848cac6cbe070562d383f6d50a402524dee42f2a19ec0546736fe10"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any_skip_relocation, tahoe: "36ccf9e92ec8f1bcf7a55bbe21d9e5684e7bfec3329ef70b35faa5d8ee139ef5"
   end
 
   depends_on "cmake" => :build

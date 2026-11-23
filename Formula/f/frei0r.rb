@@ -7,11 +7,8 @@ class Frei0r < Formula
   compatibility_version 1
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_golden_gate: "05cb8f77b9460ebb1c33eb25fd6940fb62f923b5edbf2a3a4da3697f9b3327f5"
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:       "77deddc2b5735ffaf736ce6c08ded0e7c35dd08089a1b34b344ea3c1ac19d401"
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:     "a52ae8e900b7ad897f674979afbd097894820d669ab27df5c3db7a179bc20561"
-    sha256 cellar: :any,                 arm64_linux:       "5fc70b71dcce4f3944db6751ff095bfa239b9059194c0ec15e7b65eff6268caa"
-    sha256 cellar: :any,                 x86_64_linux:      "afc6c673251dd32ae65587c380958beebaf794a7fabc86786defeb15cbed3671"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any_skip_relocation, tahoe: "07ff86c5592f34105c16636484047fb6c0ef9efd5c73b987c9649f6294f28039"
   end
 
   depends_on "cmake" => :build

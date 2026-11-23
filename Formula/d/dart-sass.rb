@@ -1,10 +1,9 @@
 class DartSass < Formula
   desc "Reference implementation of Sass, written in Dart"
   homepage "https://sass-lang.com/dart-sass"
-  url "https://github.com/sass/dart-sass/archive/refs/tags/1.108.2.tar.gz"
-  sha256 "573b7d17d5369b7442534e158971c3cc1c439a19c4932b672a25b5c9d424a4ba"
+  url "https://github.com/sass/dart-sass/archive/refs/tags/1.108.1.tar.gz"
+  sha256 "a00bf6aeb0fc22183140728b72fa1f8603ff6e9e314e6fb816c3dbf5ddd5d614"
   license "MIT"
-  revision 1
   compatibility_version 1
 
   # Some tags are used for sass-api/sass-parser
@@ -14,11 +13,8 @@ class DartSass < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_golden_gate: "f4c95b0edb572dd3ca7ee1ca07ea6b6df522fdd59069fa7dcfcc4dc002a4a75e"
-    sha256 cellar: :any,                 arm64_tahoe:       "59e4d7a813f64820ce7caef61e062619e2ddab1328cd99815ac9a04d7e7c8ae1"
-    sha256 cellar: :any,                 arm64_sequoia:     "8c8701cbe1277f13be9d1e90bf1cffbf2161809b4a7fa1333be8b670ca5872e3"
-    sha256 cellar: :any_skip_relocation, arm64_linux:       "8baf5d3be7b015e29aed1d5eeac158689ce2ec24e1cc9aee67df0b5faa45bc73"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:      "5d31f274cc39c408bab4e404be2e5e32e9b8228bb385a943d48454927d24d125"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any, tahoe: "1336e19071fbf182f053668f5456d38fb8d3ef5d6737ba9491f1069cff171a95"
   end
 
   depends_on "buf" => :build
@@ -49,12 +45,11 @@ class DartSass < Formula
       system "dart", "run", "grinder", "protobuf"
     end
 
-    language_version = resource("language").version
     args = %W[
       -Dversion=#{version}
       -Ddart-version=#{Formula["dart-sdk"].version}
       -Dcompiler-version=#{version}
-      -Dprotocol-version=#{language_version}
+      -Dprotocol-version=#{resource("language").version}
     ]
     system "dart", "compile", "aot-snapshot", "--output", "sass.aot", *args, "bin/sass.dart"
     libexec.install "sass.aot"

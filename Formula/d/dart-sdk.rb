@@ -1,11 +1,10 @@
 class DartSdk < Formula
   desc "Dart Language SDK, including the VM, dart2js, core libraries, and more"
   homepage "https://dart.dev"
-  url "https://github.com/dart-lang/sdk.git",
-      tag:      "3.14.1",
-      revision: "c8a0db5978a68d4037f7e5294ffc79867935c8c2"
+  url "https://github.com/dart-lang/sdk/archive/refs/tags/3.13.7.tar.gz"
+  sha256 "cd2a1450f33cfeb35f180d33b836ab92a663d1335ee7f953ae3ebcb20308c99d"
   license "BSD-3-Clause"
-  compatibility_version 4
+  compatibility_version 3
 
   livecheck do
     url :stable
@@ -13,11 +12,8 @@ class DartSdk < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_golden_gate: "6807c7853a052edb31c54c7395d2b33799c190441b895e2e965568e970b994d6"
-    sha256 cellar: :any, arm64_tahoe:       "26e9d9eaf22b4fbb7f0783e8cf629905daaefb3a4f8ccbc3699eb91bcf696c60"
-    sha256 cellar: :any, arm64_sequoia:     "4b4cd24b0ad1b9e31a6a54a347a733166734f063bfe6af00b39d81d3cfa14257"
-    sha256 cellar: :any, arm64_linux:       "66ae91922d6f0c78a1c8da9cb30f4bdc247941a166a070e6dd0de7676451e22f"
-    sha256 cellar: :any, x86_64_linux:      "af1c4db2f89cf3433be7008df386942c82a29327a5fa844af67190adcacfe668"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any, tahoe: "dc796002af271fb6fa5a2cf1afaa962f4d6f9ac4454c2f94d6b8054549419064"
   end
 
   depends_on "ninja" => :build
@@ -27,15 +23,11 @@ class DartSdk < Formula
   uses_from_macos "python" => :build
   uses_from_macos "xz" => :build
 
-  on_macos do
-    depends_on xcode: :build # for xcodebuild
-  end
-
   # always pull the latest commit from https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/refs/heads/main
   resource "depot-tools" do
     url "https://chromium.googlesource.com/chromium/tools/depot_tools.git",
-        revision: "ec77017fb3e090ff02bffb9c6980ebcdd3006ddc"
-    version "ec77017fb3e090ff02bffb9c6980ebcdd3006ddc"
+        revision: "b1c2e86792a7f2b6576c181b7327ddd53b1a42a8"
+    version "b1c2e86792a7f2b6576c181b7327ddd53b1a42a8"
 
     livecheck do
       url "https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/refs/heads/main?format=JSON"
@@ -43,27 +35,27 @@ class DartSdk < Formula
     end
   end
 
-  allow_network_access! :test
-
-  def fetch
-    (buildpath/"sdk-src").install buildpath.children
-    (buildpath/"depot-tools").install resource("depot-tools")
-    mv "sdk-src", "sdk"
+  def install
+    resource("depot-tools").stage(buildpath/"depot-tools")
 
     ENV["DEPOT_TOOLS_UPDATE"] = "0"
-    ENV.append_path "PATH", buildpath/"depot-tools"
+    ENV.append_path "PATH", "#{buildpath}/depot-tools"
 
-    system "gclient", "config", "--name", "sdk", "file://#{buildpath}/sdk"
+    # Roll clang to include lld support for arm64e.x1 targets in the macOS 27 SDK (llvm/llvm-project#222721)
+    # TODO: Remove when upstream rolls clang past that commit, see https://github.com/dart-lang/sdk/issues/64264
+    system "gclient", "config", "--name", "sdk",
+           "--custom-var", 'clang_version="git_revision:07d67299a15ce03b053736e2d31a668ee0576987"',
+           "https://dart.googlesource.com/sdk.git@#{version}"
     system "gclient", "sync", "--no-history"
-  end
 
-  def install
-    cd "sdk" do
-      # Avoid hanging when the bootstrap SDK's VM service cannot bind to localhost in the sandbox
-      inreplace "utils/ddc/BUILD.gn", '"--no-source-maps",', '"--no-source-maps", "--omit-memory-summary",'
-      arch = Hardware::CPU.intel? ? "x64" : Hardware::CPU.arch.to_s
-      out = OS.mac? ? "xcodebuild" : "out"
+    chdir "sdk" do
+      # The newer clang flags an unused variable in binaryen, which is built with -Werror
+      inreplace "third_party/binaryen/BUILD.gn", '"-Wno-unused-private-field",',
+                                                   "\\0\n        \"-Wno-unused-variable\","
+
+      arch = Hardware::CPU.arm? ? "arm64" : "x64"
       system "./tools/build.py", "--mode=release", "--arch=#{arch}", "create_sdk"
+      out = OS.linux? ? "out" : "xcodebuild"
       libexec.install Dir["#{out}/Release#{arch.upcase}/dart-sdk/*"]
     end
     bin.install_symlink libexec/"bin/dart"
@@ -71,7 +63,7 @@ class DartSdk < Formula
 
   test do
     system bin/"dart", "create", "dart-test"
-    cd "dart-test" do
+    chdir "dart-test" do
       assert_match "Hello world: 42!", shell_output("#{bin}/dart run")
     end
   end

@@ -9,11 +9,8 @@ class Libngtcp2 < Formula
   head "https://github.com/ngtcp2/ngtcp2.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any, arm64_golden_gate: "d65b079eb551262a42e0087b2324c468f3787d2a43b7ff8ea46c61f31b59d1e2"
-    sha256 cellar: :any, arm64_tahoe:       "c1face4d23af05416918430026ba50211f85f60bd37c48250eb306a1bcec6f36"
-    sha256 cellar: :any, arm64_sequoia:     "ee6c605ea834e91eb3a47c1dc64bf49f005b9f6053eaf9d549ba883a1f80ceef"
-    sha256 cellar: :any, arm64_linux:       "95d4cdea286f7560e42dd01de34872416486ccbd4b32c8e57f13d28ef145382b"
-    sha256 cellar: :any, x86_64_linux:      "8b78cd71163fa19134d6551c5232c08dde780c8c7deeeeec56d403070920c2b5"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any, tahoe: "baa146c667c77f0d392b280432da34130f9a84244ac6729e21023e4ce48e939d"
   end
 
   depends_on "pkgconf" => :build

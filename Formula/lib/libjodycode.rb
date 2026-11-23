@@ -7,11 +7,8 @@ class Libjodycode < Formula
   compatibility_version 1
 
   bottle do
-    sha256 cellar: :any, arm64_golden_gate: "83e23477ee5a814cd9f6801c5d8fcad6161ba6dc1d941cfb620474a25eaa9176"
-    sha256 cellar: :any, arm64_tahoe:       "073330f62fd7c97addcf3b43fd146b401b9cc2801fc5fc44e7369f55f2b6c8af"
-    sha256 cellar: :any, arm64_sequoia:     "2431749499aabc426faa6f7108f5eea6b5112ed9160cf32232dc4a8e3e9bc9ed"
-    sha256 cellar: :any, arm64_linux:       "eb03e31193bda2be8b75368c1e26caaf364eed93271fbc4bf859993f2a0ac4b9"
-    sha256 cellar: :any, x86_64_linux:      "0b2096e2952453b9016c2f306361fef6ea335f5bdd07c04a7d47faf667f84dbb"
+    root_url "https://github.com/noelsorameso/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any, tahoe: "1bab91b516eb3b9dc2530293a5ddcba9d608de5669a2aa44c484d6bc128ecf29"
   end
 
   # These files used to be distributed as part of the jdupes formula

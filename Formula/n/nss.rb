@@ -1,8 +1,8 @@
 class Nss < Formula
   desc "Libraries for security-enabled client and server applications"
   homepage "https://firefox-source-docs.mozilla.org/security/nss/index.html"
-  url "https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_134_RTM/src/nss-3.134.tar.gz"
-  sha256 "bb3b300b457f44da9a9486917c3b33bbc5935ae3cdf60aa759a6880889439c50"
+  url "https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_133_RTM/src/nss-3.133.tar.gz"
+  sha256 "4d752526b9846a1d962588cfbd09b7cc2a4f6a4effbd9157d58a30e8a2573065"
   license "MPL-2.0"
   compatibility_version 1
 
@@ -15,11 +15,8 @@ class Nss < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_golden_gate: "67fd8cd45a6cdef966d13bcfc8d5fa1f08735ee8a72fa1ff61bd905ee86350e1"
-    sha256 cellar: :any, arm64_tahoe:       "c65937972682479a5dde0108607c10227c4e3f7e239ba2d138554b8cd710a9ad"
-    sha256 cellar: :any, arm64_sequoia:     "fbcd7c31872709eedf1f5221b21ab0bbbe569c5d7809478ea192e39b3d9eb727"
-    sha256 cellar: :any, arm64_linux:       "e857856a5c9c7bd7b23f0b071a11543a5bf804ff44d552fa3ec7e48f50140ed0"
-    sha256 cellar: :any, x86_64_linux:      "9628a3c7ec0fd8fe2dd521ebaf9dd04bf9275994fdd5af8f1ac4e51d6cb8d1a3"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any, tahoe: "a9551cfc584af081d9a48597c12743a28f99741d9701b12abc3597c5f33f891d"
   end
 
   depends_on "nspr"
@@ -70,14 +67,7 @@ class Nss < Formula
 
     include_target = include/"nss"
     include_target.mkpath
-    # Keep subdirectories such as `mozpkix`, which its headers include as `mozpkix/*.h`
-    Dir.glob("public/{dbm,nss}/**/*") do |file|
-      next if File.directory?(file)
-
-      target = include_target/Pathname(file).each_filename.drop(2).join("/")
-      target.dirname.mkpath
-      cp file, target
-    end
+    Dir.glob("public/{dbm,nss}/*") { |file| cp file, include_target }
 
     lib.mkpath
     libexec.mkpath
@@ -91,9 +81,21 @@ class Nss < Formula
     # resolves conflict with openssl, see legacy-homebrew#28258
     rm lib/"libssl.a"
 
-    # A very minimal nss-config for configuring firefox etc. with this nss,
-    # see https://bugzil.la/530672 for the progress of upstream inclusion.
-    (bin/"nss-config").write <<~SH
+    (bin/"nss-config").write config_file
+    (lib/"pkgconfig/nss.pc").write pc_file
+  end
+
+  test do
+    # See: https://developer.mozilla.org/docs/Mozilla/Projects/NSS/tools/NSS_Tools_certutil
+    (testpath/"passwd").write("It's a secret to everyone.")
+    system bin/"certutil", "-N", "-d", pwd, "-f", "passwd"
+    system bin/"certutil", "-L", "-d", pwd
+  end
+
+  # A very minimal nss-config for configuring firefox etc. with this nss,
+  # see https://bugzil.la/530672 for the progress of upstream inclusion.
+  def config_file
+    <<~SH
       #!/bin/sh
       for opt; do :; done
       case "$opt" in
@@ -103,7 +105,10 @@ class Nss < Formula
       esac
       pkg-config "$opt" nss
     SH
-    (lib/"pkgconfig/nss.pc").write <<~PC
+  end
+
+  def pc_file
+    <<~PC
       prefix=#{prefix}
       exec_prefix=${prefix}
       libdir=${exec_prefix}/lib
@@ -116,12 +121,5 @@ class Nss < Formula
       Libs: -L${libdir} -lnss3 -lnssutil3 -lsmime3 -lssl3
       Cflags: -I${includedir}
     PC
-  end
-
-  test do
-    # See: https://developer.mozilla.org/docs/Mozilla/Projects/NSS/tools/NSS_Tools_certutil
-    (testpath/"passwd").write("It's a secret to everyone.")
-    system bin/"certutil", "-N", "-d", pwd, "-f", "passwd"
-    system bin/"certutil", "-L", "-d", pwd
   end
 end

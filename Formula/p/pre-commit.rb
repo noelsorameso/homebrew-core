@@ -10,12 +10,8 @@ class PreCommit < Formula
   head "https://github.com/pre-commit/pre-commit.git", branch: "main"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any, arm64_golden_gate: "30b05af7806195b8a424d967d934488078812b5c2f0d1edb2d4f79d02ef4fcc2"
-    sha256 cellar: :any, arm64_tahoe:       "e3b0a2e53a13db0e2936387330b0520946d4d7e496033eaf419cdd5a3c503691"
-    sha256 cellar: :any, arm64_sequoia:     "48a3d76cad39723858f06144bed43ae0eb2399d253665906b6b8f74d284997bf"
-    sha256 cellar: :any, arm64_linux:       "f0a583a4c58ba2ff6798850260d1a7a445b40280291ea307becf85a69172661e"
-    sha256 cellar: :any, x86_64_linux:      "52e26653db585e80f93de5e2c1417e8a32d1cdb5df93dd87a5c160a673d817a9"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any, tahoe: "4276718b37ea237dcb4be41730fadf4d56ec482e6a56a91292085fad63b2d431"
   end
 
   depends_on "libyaml"

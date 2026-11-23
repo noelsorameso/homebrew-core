@@ -12,12 +12,8 @@ class Libarchive < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any, arm64_golden_gate: "80ad35d8783fa7650af7f21d58473d6a9eaa1b9939de5d2da2c916b9e9d92f30"
-    sha256 cellar: :any, arm64_tahoe:       "ae94cc6cd4ecd7bed1cc80889b704806eba9d43c6e9afefc7f5ce7191f64ee92"
-    sha256 cellar: :any, arm64_sequoia:     "93fd0ff4cb92c465817383520120baae8d404fb1c97e7bd1c48ed2d23687ab4e"
-    sha256 cellar: :any, arm64_linux:       "fa164450c9f8f5d97e5293c232a91526a20f1cbc81d3851665ef1c8dbabf962e"
-    sha256 cellar: :any, x86_64_linux:      "36c26b84101e382d1e7035423167ab1e4584b68085782a14c1d3c346bdbbb502"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any, tahoe: "8e5636620676ecc5990e72982c268d167abe946b5afd36bd109716306fad0a82"
   end
 
   keg_only :provided_by_macos

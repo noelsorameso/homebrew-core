@@ -8,12 +8,8 @@ class Subversion < Formula
   compatibility_version 1
 
   bottle do
-    rebuild 1
-    sha256 arm64_golden_gate: "e57dec28a5f11bcf11f8ba204a4067dd831097ce3087fae3d621756b670dd48a"
-    sha256 arm64_tahoe:       "33e911ec83ea6db1147065875c787523253c281340ab5c83536a4d105c9d6f3c"
-    sha256 arm64_sequoia:     "560f093e7676d74f8f503463c870706b28ec109cb8980ce6e818306aceb55aa2"
-    sha256 arm64_linux:       "dd6488e77bc63167748bef73f18ecb415118e13f6662d8ec73fa5da2bdef29f8"
-    sha256 x86_64_linux:      "bb1b3c72ad3a545d05f9b1674b4a822177675e2a32909254460ac5ff570a9f7e"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 tahoe: "d0f011b1779652de84548c19d88a37cb473c895bdb7c2a898a2395bd884bc087"
   end
 
   head do

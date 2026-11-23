@@ -19,11 +19,8 @@ class Qtcanvaspainter < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_golden_gate: "6b137b07df5e98359bd3620fbc6517648199c8e7f240a785371014eccb93cc1c"
-    sha256 cellar: :any, arm64_tahoe:       "6907281a4aa62b2396e9626de0957f675108920d9f2a0fbf1a5947d67f5101c7"
-    sha256 cellar: :any, arm64_sequoia:     "28dc91ed03c7eb3e413b2768857a5bee1544a4641639d31aa725e951bd9b39f4"
-    sha256 cellar: :any, arm64_linux:       "febd792b408cad59e0af64225395af89113d9e8c108b578f9beb4df912e67149"
-    sha256 cellar: :any, x86_64_linux:      "2ca1313d26f18d61969cb2d594d3439c8409deb945d6d78a4e96537dc7bf84d3"
+    root_url "https://github.com/fabiomanz/intel-bottles/releases/download/bottles"
+    sha256 cellar: :any, tahoe: "24437fee97e0c2762037bafe67accbee7b44b9d131468ce04a64e0a8bad8f683"
   end
 
   depends_on "cmake" => [:build, :test]
