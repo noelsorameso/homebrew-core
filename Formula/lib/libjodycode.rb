@@ -6,6 +6,13 @@ class Libjodycode < Formula
   license "MIT"
   compatibility_version 1
 
+  livecheck do
+    url "https://codeberg.org/api/v1/repos/jbruchon/libjodycode/releases"
+    strategy :json do |json|
+      json.filter_map { |tag| tag["tag_name"]&.delete_prefix("v") }
+    end
+  end
+
   bottle do
     root_url "https://github.com/noelsorameso/intel-bottles/releases/download/bottles"
     sha256 cellar: :any, tahoe: "1bab91b516eb3b9dc2530293a5ddcba9d608de5669a2aa44c484d6bc128ecf29"
