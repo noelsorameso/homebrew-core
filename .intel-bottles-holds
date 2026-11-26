@@ -36,7 +36,6 @@ mysql	Formula/m/mysql.rb	d3d11d419fe31dc4c82f1d4413845ea8a97de953	26.10.0_1	26.1
 node	Formula/n/node.rb	d3d11d419fe31dc4c82f1d4413845ea8a97de953	26.13.1	26.13.1_4
 nss	Formula/n/nss.rb	d3d11d419fe31dc4c82f1d4413845ea8a97de953	3.133	3.134
 numpy	Formula/n/numpy.rb	d3d11d419fe31dc4c82f1d4413845ea8a97de953	2.5.4	2.5.5
-oh-my-posh	Formula/o/oh-my-posh.rb	d3d11d419fe31dc4c82f1d4413845ea8a97de953	33.4.0	33.4.1
 openexr	Formula/o/openexr.rb	d3d11d419fe31dc4c82f1d4413845ea8a97de953	3.5.3_1	3.5.5
 p11-kit	Formula/p/p11-kit.rb	d3d11d419fe31dc4c82f1d4413845ea8a97de953	0.26.5	0.26.6
 pandoc	Formula/p/pandoc.rb	d3d11d419fe31dc4c82f1d4413845ea8a97de953	3.13	3.14
